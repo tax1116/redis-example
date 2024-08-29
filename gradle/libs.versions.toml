@@ -5,6 +5,7 @@ ktlint = "12.0.3"
 kotest = "5.8.0"
 spring-boot = "3.2.1"
 spring-dependency-management = "1.1.4"
+spring-boot-tarter-redisson = "3.35.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin"}
@@ -33,4 +34,7 @@ spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-start
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 spring-boot-starter-webflux = { module = "org.springframework.boot:spring-boot-starter-webflux" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+
+# redisson
+spring-boot-starter-redisson = { module = "org.redisson:redisson-spring-boot-starter", version.ref = "spring-boot-tarter-redisson" }
 
