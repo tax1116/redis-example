@@ -1,2 +1,2 @@
-# spring-boot-multi-module-template
-스프링 부트 멀티모듈 템플릿 프로젝트
+# Redis Example
+레디스 예제 프로젝트
