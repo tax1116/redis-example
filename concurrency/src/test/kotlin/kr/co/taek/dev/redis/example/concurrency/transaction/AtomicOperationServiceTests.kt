@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.test.context.ActiveProfiles
 import java.util.concurrent.CompletableFuture
 
+@ActiveProfiles("test")
 @SpringBootTest
 class AtomicOperationServiceTests {
     @Autowired
@@ -27,7 +29,6 @@ class AtomicOperationServiceTests {
         }
 
         // when
-
         val futures = mutableListOf<CompletableFuture<Void>>()
         repeat(2) {
             val future = CompletableFuture.runAsync {

@@ -10,6 +10,8 @@ dependencies {
     implementation(libs.spring.boot.starter.data.redis)
 
     implementation(libs.spring.boot.starter.redisson)
+    testImplementation(libs.testcontainers)
+    testImplementation(libs.testcontainers.redis)
     implementation("io.netty:netty-resolver-dns-native-macos:4.1.107.Final:osx-x86_64") // 인텔 맥 DNS 설정
 }
 
