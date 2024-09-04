@@ -77,19 +77,21 @@ class AtomicOperationService(
     }
 
     fun incrementWithLuaScript(key: String) {
-        val script = "local currentValue = redis.call('GET', KEYS[1]) " +
-            "if currentValue == false then " +
-            "currentValue = 0 " +
-            "else " +
-            "currentValue = tonumber(currentValue) " +
-            "end " +
-            "redis.call('SET', KEYS[1], currentValue + 1) " +
-            "return currentValue + 1"
+        val script =
+            "local currentValue = redis.call('GET', KEYS[1]) " +
+                "if currentValue == false then " +
+                "currentValue = 0 " +
+                "else " +
+                "currentValue = tonumber(currentValue) " +
+                "end " +
+                "redis.call('SET', KEYS[1], currentValue + 1) " +
+                "return currentValue + 1"
 
-        val result = redisTemplate.execute(
-            RedisScript.of(script, Long::class.java), // Lua script to execute
-            listOf(key) // KEYS[1] is the key in Lua script
-        )
+        val result =
+            redisTemplate.execute(
+                RedisScript.of(script, Long::class.java), // Lua script to execute
+                listOf(key), // KEYS[1] is the key in Lua script
+            )
 
         log.info { "Increment result: $result" }
     }
