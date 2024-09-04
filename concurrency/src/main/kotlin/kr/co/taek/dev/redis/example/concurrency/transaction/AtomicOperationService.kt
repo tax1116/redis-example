@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.data.redis.core.RedisOperations
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.SessionCallback
+import org.springframework.data.redis.core.script.RedisScript
 import org.springframework.stereotype.Service
 import kotlin.math.pow
 import kotlin.random.Random
@@ -73,5 +74,25 @@ class AtomicOperationService(
             log.error { "트랜잭션 실패: 다른 클라이언트에 의해 키가 변경되었습니다." }
             throw RuntimeException("트랜잭션 실패: 다른 클라이언트에 의해 키가 변경되었습니다.")
         }
+    }
+
+    fun incrementWithLuaScript(key: String) {
+        val script =
+            "local currentValue = redis.call('GET', KEYS[1]) " +
+                "if currentValue == false then " +
+                "currentValue = 0 " +
+                "else " +
+                "currentValue = tonumber(currentValue) " +
+                "end " +
+                "redis.call('SET', KEYS[1], currentValue + 1) " +
+                "return currentValue + 1"
+
+        val result =
+            redisTemplate.execute(
+                RedisScript.of(script, Long::class.java), // Lua script to execute
+                listOf(key), // KEYS[1] is the key in Lua script
+            )
+
+        log.info { "Increment result: $result" }
     }
 }
