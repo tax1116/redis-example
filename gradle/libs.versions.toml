@@ -6,6 +6,9 @@ kotest = "5.8.0"
 spring-boot = "3.2.1"
 spring-dependency-management = "1.1.4"
 spring-boot-tarter-redisson = "3.35.0"
+spring-boot-starter-data-redis = "3.3.3"
+testcontainers = "1.20.1"
+testcontainers-redis = "1.6.4"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin"}
@@ -27,6 +30,9 @@ kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-redis = { module = "com.redis.testcontainers:testcontainers-redis", version.ref = "testcontainers-redis" }
+
 # spring
 spring-context = { module = "org.springframework:spring-context" }
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter" }
@@ -37,4 +43,4 @@ spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-
 
 # redisson
 spring-boot-starter-redisson = { module = "org.redisson:redisson-spring-boot-starter", version.ref = "spring-boot-tarter-redisson" }
-
+spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis", version.ref = "spring-boot-starter-data-redis" }
