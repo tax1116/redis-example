@@ -31,9 +31,10 @@ class AtomicOperationServiceTests {
         // when
         val futures = mutableListOf<CompletableFuture<Void>>()
         repeat(2) {
-            val future = CompletableFuture.runAsync {
-                atomicOperationService.increment(key, true)
-            }
+            val future =
+                CompletableFuture.runAsync {
+                    atomicOperationService.increment(key, true)
+                }
 
             futures.add(future)
         }

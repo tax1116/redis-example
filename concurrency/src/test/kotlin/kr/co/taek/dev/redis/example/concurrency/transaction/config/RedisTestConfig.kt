@@ -14,21 +14,22 @@ import org.testcontainers.utility.DockerImageName
 @Profile("test")
 @Configuration
 class RedisTestConfig {
-   @Bean(initMethod = "start", destroyMethod = "stop")
-   fun redisContainer(): RedisContainer {
-       return RedisContainer(DockerImageName.parse("redis:latest"))
-   }
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    fun redisContainer(): RedisContainer {
+        return RedisContainer(DockerImageName.parse("redis:latest"))
+    }
 
-   @Bean
-   @DependsOn("redisContainer")
-   fun redissonClient(redisContainer: RedisContainer): RedissonClient {
-       val host = redisContainer.host
-       val port = redisContainer.firstMappedPort
-       val config = Config().apply {
-           this.useSingleServer().address = "redis://$host:$port"
-       }
-       return Redisson.create(config)
-   }
+    @Bean
+    @DependsOn("redisContainer")
+    fun redissonClient(redisContainer: RedisContainer): RedissonClient {
+        val host = redisContainer.host
+        val port = redisContainer.firstMappedPort
+        val config =
+            Config().apply {
+                this.useSingleServer().address = "redis://$host:$port"
+            }
+        return Redisson.create(config)
+    }
 
     @Bean
     @DependsOn("redisContainer")

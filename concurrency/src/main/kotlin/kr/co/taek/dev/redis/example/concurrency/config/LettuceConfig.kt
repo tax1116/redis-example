@@ -18,7 +18,6 @@ class LettuceConfig {
             keySerializer = StringRedisSerializer()
             valueSerializer = GenericJackson2JsonRedisSerializer()
             setEnableTransactionSupport(true)
-
         }
     }
 

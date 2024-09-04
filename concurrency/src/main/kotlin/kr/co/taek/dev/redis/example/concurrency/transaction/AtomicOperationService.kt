@@ -41,7 +41,6 @@ class AtomicOperationService(
                         break
                     }
                 }
-
             }
         } else {
             incrementWithRedisCallback(key)
@@ -49,23 +48,26 @@ class AtomicOperationService(
     }
 
     private fun incrementWithRedisCallback(key: String) {
-        val result = redisTemplate.execute(object : SessionCallback<List<Any>> {
-            override fun <K : Any, V : Any> execute(operations: RedisOperations<K, V>): List<Any> {
-                redisTemplate.watch(key)
-                val currentValue = redisTemplate.opsForValue().get(key) ?: 0
-                redisTemplate.multi()
-                return try {
-                    redisTemplate.opsForValue().set(key, currentValue + 1)
-                    redisTemplate.exec()
-                } catch (e: Exception) {
-                    log.error { "Error: $e" }
-                    redisTemplate.discard()
-                    throw e
-                } finally {
-                    redisTemplate.unwatch()
-                }
-            }
-        })
+        val result =
+            redisTemplate.execute(
+                object : SessionCallback<List<Any>> {
+                    override fun <K : Any, V : Any> execute(operations: RedisOperations<K, V>): List<Any> {
+                        redisTemplate.watch(key)
+                        val currentValue = redisTemplate.opsForValue().get(key) ?: 0
+                        redisTemplate.multi()
+                        return try {
+                            redisTemplate.opsForValue().set(key, currentValue + 1)
+                            redisTemplate.exec()
+                        } catch (e: Exception) {
+                            log.error { "Error: $e" }
+                            redisTemplate.discard()
+                            throw e
+                        } finally {
+                            redisTemplate.unwatch()
+                        }
+                    }
+                },
+            )
 
         if (result.isEmpty()) {
             log.error { "트랜잭션 실패: 다른 클라이언트에 의해 키가 변경되었습니다." }
