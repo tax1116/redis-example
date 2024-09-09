@@ -21,7 +21,6 @@ class LuaAtomicOperationServiceTests {
     @Autowired
     private lateinit var redisTemplate: RedisTemplate<String, Int>
 
-
     @DisplayName("2개의 스레드가 동시에 Redis에 접근하여 값을 증가시키더라도 Lua 스크립트에 의해 값이 각각 1씩 증가한다.")
     @Test
     fun increment_with_lua_script() {
