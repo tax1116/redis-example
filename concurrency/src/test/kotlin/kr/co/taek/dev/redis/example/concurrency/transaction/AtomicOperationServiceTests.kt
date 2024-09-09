@@ -1,31 +1,17 @@
 package kr.co.taek.dev.redis.example.concurrency.transaction
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.data.redis.core.StringRedisTemplate
-import org.springframework.data.redis.core.script.RedisScript
-import org.springframework.data.redis.serializer.RedisSerializer
 import org.springframework.test.context.ActiveProfiles
 import java.util.concurrent.CompletableFuture
-import kotlin.concurrent.thread
-
-private val log = KotlinLogging.logger {}
 
 @ActiveProfiles("test")
 @SpringBootTest
 class AtomicOperationServiceTests {
-    @Autowired
-    private lateinit var jacksonObjectMapper: ObjectMapper
-
-    @Autowired
-    private lateinit var stringRedisTemplate: StringRedisTemplate
-
     @Autowired
     private lateinit var atomicOperationService: AtomicOperationService
 
@@ -85,22 +71,25 @@ class AtomicOperationServiceTests {
         val test2Dto = ConcurrencyTestDto(test2 = Test2Dto("test2"))
 
         // when
-        val future1 = CompletableFuture.supplyAsync {
-            atomicOperationService.updateJsonFieldWithLuaScript(key, "test1", test1Dto)
-        }
+        val future1 =
+            CompletableFuture.supplyAsync {
+                atomicOperationService.updateJsonFieldWithLuaScript(key, "test1", test1Dto)
+            }
 
-        val future2 = CompletableFuture.supplyAsync {
-            atomicOperationService.updateJsonFieldWithLuaScript(key, "test2", test2Dto)
-        }
+        val future2 =
+            CompletableFuture.supplyAsync {
+                atomicOperationService.updateJsonFieldWithLuaScript(key, "test2", test2Dto)
+            }
 
         val result1 = future1.get()
         val result2 = future2.get()
 
         // then
-        val cmp = ConcurrencyTestDto(
-            test1 = Test1Dto("test1"),
-            test2 = Test2Dto("test2"),
-        )
+        val cmp =
+            ConcurrencyTestDto(
+                test1 = Test1Dto("test1"),
+                test2 = Test2Dto("test2"),
+            )
 
         (result1 == cmp || result2 == cmp) shouldBe true
     }

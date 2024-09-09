@@ -18,7 +18,7 @@ private val log = KotlinLogging.logger {}
 class AtomicOperationService(
     private val redisTemplate: RedisTemplate<String, Int>,
     private val stringRedisTemplate: StringRedisTemplate,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
 ) {
     fun increment(
         key: String,
@@ -101,11 +101,16 @@ class AtomicOperationService(
         log.info { "Increment result: $result" }
     }
 
-    fun <T> updateJsonFieldWithLuaScript(redisKey: String, jsonField: String, newValue: T): T {
+    fun <T> updateJsonFieldWithLuaScript(
+        redisKey: String,
+        jsonField: String,
+        newValue: T,
+    ): T {
         val input = objectMapper.writeValueAsString(newValue)
 
         // Lua script to update JSON field
-        val script = """
+        val script =
+            """
             local currentValue = redis.call('GET', KEYS[1])
             local inputValue = cjson.decode(ARGV[2])
 
@@ -129,16 +134,17 @@ class AtomicOperationService(
             else
                 error('Field already has a value')
             end
-        """.trimIndent()
+            """.trimIndent()
 
-        val result = stringRedisTemplate.execute(
-            RedisScript.of(script, String::class.java),
-            RedisSerializer.string(),
-            RedisSerializer.string(),
-            listOf(redisKey),
-            jsonField,
-            input,
-        )
+        val result =
+            stringRedisTemplate.execute(
+                RedisScript.of(script, String::class.java),
+                RedisSerializer.string(),
+                RedisSerializer.string(),
+                listOf(redisKey),
+                jsonField,
+                input,
+            )
         log.info { "Result: $result" }
 
         return objectMapper.readValue(result, newValue!!::class.java)
