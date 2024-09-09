@@ -1,4 +1,4 @@
-package kr.co.taek.dev.redis.example.concurrency.transaction
+package kr.co.taek.dev.redis.example.concurrency.lua.dto
 
 data class ConcurrencyTestDto(
     val test1: Test1Dto? = null,
