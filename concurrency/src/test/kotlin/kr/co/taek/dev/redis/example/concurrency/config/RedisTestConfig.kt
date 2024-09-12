@@ -1,4 +1,4 @@
-package kr.co.taek.dev.redis.example.concurrency.transaction.config
+package kr.co.taek.dev.redis.example.concurrency.config
 
 import com.redis.testcontainers.RedisContainer
 import org.redisson.Redisson
