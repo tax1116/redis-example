@@ -26,30 +26,31 @@ class AtomicOperationService(
         retryCnt: Int = 3,
         backOff: Long = 1000L,
     ) {
-        if (retryable) {
-            var retry = 0
-            while (retry < retryCnt) {
+        if (!retryable) {
+            incrementWithRedisCallback(key)
+            return
+        }
+
+        var retry = 0
+        while (retry < retryCnt) {
+            try {
+                incrementWithRedisCallback(key)
+                break
+            } catch (e: Exception) {
+                log.error { "Error: $e" }
+                retry++
+
+                var backoffTime = backOff * 2.00.pow(retry.toDouble()).toLong()
+                backoffTime += Random.nextInt(100) // 무작위성 추가, thundering herd problem (즉, 여러 클라이언트가 동시에 재시도를 하는 문제) 방지
+
                 try {
-                    incrementWithRedisCallback(key)
+                    Thread.sleep(backoffTime) // 계산된 시간만큼 대기
+                } catch (ie: InterruptedException) {
+                    log.warn { "Thread interrupted during backoff sleep" }
+                    Thread.currentThread().interrupt() // 현재 스레드의 인터럽트 상태를 설정
                     break
-                } catch (e: Exception) {
-                    log.error { "Error: $e" }
-                    retry++
-
-                    var backoffTime = backOff * 2.00.pow(retry.toDouble()).toLong()
-                    backoffTime += Random.nextInt(100) // 무작위성 추가, thundering herd problem (즉, 여러 클라이언트가 동시에 재시도를 하는 문제) 방지
-
-                    try {
-                        Thread.sleep(backoffTime) // 계산된 시간만큼 대기
-                    } catch (ie: InterruptedException) {
-                        log.warn { "Thread interrupted during backoff sleep" }
-                        Thread.currentThread().interrupt() // 현재 스레드의 인터럽트 상태를 설정
-                        break
-                    }
                 }
             }
-        } else {
-            incrementWithRedisCallback(key)
         }
     }
 
